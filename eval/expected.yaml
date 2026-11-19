@@ -1,0 +1,25 @@
+cases:
+  - id: generic-secret
+    expected_rules: [generic-assignment]
+  - id: dynamic-eval
+    expected_rules: [B307]
+  - id: weak-md5
+    expected_rules: [B324]
+  - id: shell-command
+    expected_rules: [B404, B602]
+  - id: nested-loops
+    expected_rules: [nested-loops-review]
+  - id: complex-function
+    expected_rules: [high-cyclomatic-complexity]
+  - id: test-assert
+    expected_rules: [B101]
+  - id: example-secret
+    expected_rules: [generic-assignment]
+  - id: safe-function
+    expected_rules: []
+  - id: example-md5
+    expected_rules: [B324]
+  - id: strong-hash
+    expected_rules: []
+  - id: simple-loop
+    expected_rules: []

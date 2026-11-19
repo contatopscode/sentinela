@@ -1,0 +1,80 @@
+"""Interface de linha de comando inicial do Sentinela."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+
+from sentinela import __version__
+from sentinela.classify.router import build_classifier
+from sentinela.collector import collect_context
+from sentinela.config import load_settings
+from sentinela.orchestrator import review
+from sentinela.report import json_out, markdown, sarif
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="sentinela", description="Revisão local de código")
+    subparsers = parser.add_subparsers(dest="command")
+
+    review = subparsers.add_parser("review", help="Revisa um repositório")
+    review.add_argument("path", nargs="?", default=".", help="Caminho do repositório")
+    review.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Autoriza explicitamente a execução dos testes do repositório analisado",
+    )
+    review.add_argument(
+        "--network-pip-audit",
+        action="store_true",
+        help="Autoriza o pip-audit a consultar a rede para auditar dependências",
+    )
+    review.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
+
+    subparsers.add_parser("eval", help="Executa a avaliação local")
+    subparsers.add_parser("version", help="Exibe a versão instalada")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        settings = load_settings()
+    except ValueError as exc:
+        parser.error(str(exc))
+
+    if args.command == "version":
+        print(__version__)
+        return 0
+    if args.command == "review":
+        try:
+            context = collect_context(
+                args.path,
+                run_tests=args.run_tests,
+                allow_network_audit=args.network_pip_audit,
+                enabled_analyzers=settings.analyzers,
+                max_findings=settings.max_findings,
+                max_evidence_chars=settings.max_evidence_chars,
+                timeout_seconds=settings.tool_timeout_seconds,
+            )
+            report = review(context, classifier=build_classifier(settings))
+        except (OSError, RuntimeError, ValueError) as exc:
+            print(f"sentinela: {exc}", file=sys.stderr)
+            return 2
+        rendered = {
+            "markdown": markdown.render(report, max_chars=settings.max_report_chars),
+            "json": json_out.render(report),
+            "sarif": sarif.render(report),
+        }[args.format]
+        print(rendered)
+        return 0
+    if args.command == "eval":
+        import runpy
+        from pathlib import Path
+
+        project_root = Path(__file__).resolve().parents[2]
+        evaluation = runpy.run_path(str(project_root / "eval" / "run_eval.py"))
+        return int(evaluation["main"]())
+
+    return 0
