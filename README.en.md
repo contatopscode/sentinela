@@ -95,4 +95,4 @@ mypy src
 python eval/run_eval.py
 ```
 
-See [docs/architecture.md](docs/architecture.md) for contracts and limits. Repository rules are in [AGENTS.md](AGENTS.md). The license choice is pending; no license has been assumed.
+See [docs/architecture.md](docs/architecture.md) for contracts and limits. Repository rules are in [AGENTS.md](AGENTS.md). Sentinela is distributed under the [MIT License](LICENSE).

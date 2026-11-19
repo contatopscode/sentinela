@@ -7,6 +7,7 @@ name = "sentinela"
 version = "0.1.0"
 description = "Revisão local de código com análise determinística e classificação configurável."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2,<3"]
 
