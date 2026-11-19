@@ -1,0 +1,24 @@
+def choose(a, b, c, d, e, f, g, h, i, j, k, l):
+    if a:
+        if b:
+            return 1
+        if c:
+            return 2
+    elif d:
+        if e:
+            return 3
+        if f:
+            return 4
+    elif g:
+        return 5
+    elif h:
+        return 6
+    elif i:
+        return 7
+    elif j:
+        return 8
+    elif k:
+        return 9
+    elif l:
+        return 10
+    return 0
