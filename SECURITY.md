@@ -6,7 +6,7 @@ Correções de segurança são feitas na versão mais recente publicada.
 
 ## Como relatar uma vulnerabilidade
 
-**Não abra issue pública.** Use o relato privado do GitHub: aba **Security** → **Report a vulnerability** neste repositório.
+**Não abra issue pública.** Use o relato privado do GitHub: aba **Security** → **Report a vulnerability** neste repositório. Se não for possível, escreva para **contatopscode@gmail.com**.
 
 Inclua, se possível:
 

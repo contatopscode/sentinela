@@ -6,8 +6,8 @@ Em resumo: seja respeitoso, acolha pontos de vista diferentes, aceite críticas 
 
 ## Como relatar
 
-Comportamentos inaceitáveis podem ser relatados de forma privada aos mantenedores pelo relato privado do GitHub (aba **Security** → **Report a vulnerability**, indicando no título que se trata de conduta). Todos os relatos serão analisados com sigilo.
+Comportamentos inaceitáveis podem ser relatados de forma privada aos mantenedores pelo e-mail **contatopscode@gmail.com**. Todos os relatos serão analisados com sigilo.
 
 ---
 
-_English: this project adopts the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/)._
+_English: this project adopts the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/). Report unacceptable behavior privately to contatopscode@gmail.com._
