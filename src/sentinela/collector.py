@@ -18,6 +18,7 @@ class AnalysisContext:
     max_evidence_chars: int = 1000
     timeout_seconds: int = 120
     test_durations: tuple[tuple[str, float], ...] = ()
+    passthrough_env: tuple[str, ...] = ()
 
 
 def collect_context(
@@ -29,6 +30,7 @@ def collect_context(
     max_findings: int = 200,
     max_evidence_chars: int = 1000,
     timeout_seconds: int = 120,
+    passthrough_env: tuple[str, ...] = (),
 ) -> AnalysisContext:
     """Valida o diretório e lista fontes Python sem seguir symlinks."""
     resolved = Path(root).expanduser().resolve(strict=True)
@@ -51,4 +53,5 @@ def collect_context(
         max_findings=max_findings,
         max_evidence_chars=max_evidence_chars,
         timeout_seconds=timeout_seconds,
+        passthrough_env=passthrough_env,
     )

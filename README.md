@@ -45,6 +45,8 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace:ro" sentinela
 
 Executar os testes significa executar código do repositório analisado. Use isolamento, como um container, ao revisar código não confiável. O Sentinela não altera esse repositório. A auditoria `pip-audit` é opcional, acessa a rede e só roda com `--network-pip-audit`. Código de teste pode realizar operações próprias; rode-o em ambiente isolado.
 
+Ferramentas externas recebem um ambiente mínimo (`PATH`, `HOME`, locale e diretórios temporários): chaves como `OPENAI_API_KEY` ou `GITHUB_TOKEN` não são repassadas por variável de ambiente ao código analisado. Se os testes do alvo precisarem de alguma variável, autorize-a por nome em `SENTINELA_PASSTHROUGH_ENV` (lista separada por vírgulas). Proxy e certificados só são repassados ao `pip-audit`.
+
 ### GitHub Action
 
 A Action local pode publicar um comentário em Pull Request. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.

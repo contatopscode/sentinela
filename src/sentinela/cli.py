@@ -57,6 +57,7 @@ def main(argv: list[str] | None = None) -> int:
                 max_findings=settings.max_findings,
                 max_evidence_chars=settings.max_evidence_chars,
                 timeout_seconds=settings.tool_timeout_seconds,
+                passthrough_env=settings.passthrough_env,
             )
             report = review(context, classifier=build_classifier(settings))
         except (OSError, RuntimeError, ValueError) as exc:
