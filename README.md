@@ -47,6 +47,8 @@ Executar os testes significa executar código do repositório analisado. Use iso
 
 Ferramentas externas recebem um ambiente mínimo (`PATH`, `HOME`, locale e diretórios temporários): chaves como `OPENAI_API_KEY` ou `GITHUB_TOKEN` não são repassadas por variável de ambiente ao código analisado. Se os testes do alvo precisarem de alguma variável, autorize-a por nome em `SENTINELA_PASSTHROUGH_ENV` (lista separada por vírgulas). Proxy e certificados só são repassados ao `pip-audit`.
 
+No Markdown, prováveis falsos positivos aparecem agrupados por regra; use `--show-false-positives` para listá-los. JSON e SARIF sempre trazem todos os achados.
+
 ### GitHub Action
 
 A Action local pode publicar um comentário em Pull Request. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.

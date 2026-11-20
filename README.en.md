@@ -47,6 +47,8 @@ Running tests executes code from the reviewed repository. Use isolation, such as
 
 External tools receive a minimal environment (`PATH`, `HOME`, locale and temp directories): keys such as `OPENAI_API_KEY` or `GITHUB_TOKEN` are not passed to the reviewed code through environment variables. If the target's tests need a variable, allow it by name in `SENTINELA_PASSTHROUGH_ENV` (comma-separated). Proxy and certificate settings are passed to `pip-audit` only.
 
+In Markdown, likely false positives are grouped by rule; use `--show-false-positives` to list them. JSON and SARIF always include every finding.
+
 ### GitHub Action
 
 The local Action can post a pull request comment. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.

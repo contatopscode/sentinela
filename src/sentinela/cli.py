@@ -30,6 +30,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Autoriza o pip-audit a consultar a rede para auditar dependências",
     )
     review.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
+    review.add_argument(
+        "--show-false-positives",
+        action="store_true",
+        help="Lista cada provável falso positivo no relatório Markdown, em vez de agrupá-los",
+    )
 
     subparsers.add_parser("eval", help="Executa a avaliação local")
     subparsers.add_parser("version", help="Exibe a versão instalada")
@@ -63,11 +68,16 @@ def main(argv: list[str] | None = None) -> int:
         except (OSError, RuntimeError, ValueError) as exc:
             print(f"sentinela: {exc}", file=sys.stderr)
             return 2
-        rendered = {
-            "markdown": markdown.render(report, max_chars=settings.max_report_chars),
-            "json": json_out.render(report),
-            "sarif": sarif.render(report),
-        }[args.format]
+        if args.format == "markdown":
+            rendered = markdown.render(
+                report,
+                max_chars=settings.max_report_chars,
+                show_false_positives=args.show_false_positives,
+            )
+        elif args.format == "json":
+            rendered = json_out.render(report)
+        else:
+            rendered = sarif.render(report)
         print(rendered)
         return 0
     if args.command == "eval":
