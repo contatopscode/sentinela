@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -29,7 +30,20 @@ jobs:
             echo "::error::Tag ${GITHUB_REF_NAME} não corresponde à versão ${version} do pyproject.toml"
             exit 1
           fi
-      - run: python -m pip install --upgrade pip build twine
+      - name: Confere que a tag aponta para um commit da main
+        run: |
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "::error::A tag ${GITHUB_REF_NAME} não está no histórico da main"
+            exit 1
+          fi
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev,openai]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy src
+      - run: pytest --cov=sentinela
+      - run: python eval/run_eval.py
+      - run: python -m pip install --upgrade build twine
       - run: python -m build
       - run: python -m twine check --strict dist/*
       - uses: actions/upload-artifact@v7
