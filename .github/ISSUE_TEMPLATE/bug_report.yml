@@ -1,0 +1,42 @@
+name: Relatar bug / Bug report
+description: Algo não funciona como esperado.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vulnerabilidades de segurança **não** devem ser relatadas aqui. Veja o SECURITY.md.
+        Não cole segredos, tokens ou código proprietário.
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu
+      description: Descreva o comportamento observado e o esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Como reproduzir
+      description: Comando executado e, se possível, um projeto mínimo.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versão do Sentinela
+      description: Saída de `sentinela version`.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Sistema operacional e versão do Python
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Saída relevante
+      render: text

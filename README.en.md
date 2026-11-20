@@ -1,5 +1,7 @@
 # Sentinela
 
+[![CI](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml/badge.svg)](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
+
 Sentinela reviews Python projects with deterministic QA, security, and performance checks. An optional classifier only prioritizes findings produced by those tools; `fake` is the default and works without an API key or model-provider access.
 
 ## Installation
@@ -14,7 +16,7 @@ sentinela --help
 For development, install the quality and test tools as well:
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,openai]"
 ```
 
 To enable the OpenAI integration, install the optional `openai` extra. The model identifier and current per-thousand-token prices are configured through the environment; no model name or endpoint is fixed in the code.
@@ -59,7 +61,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
     with:
       persist-credentials: false
   - uses: ./
@@ -96,11 +98,20 @@ This small curated set validates the local workflow; it is not an independent ev
 ## Development
 
 ```bash
-pytest
+python -m pip install -e ".[dev,openai]"
+pre-commit install
+
 ruff check .
 ruff format --check .
 mypy src
+pytest --cov=sentinela   # minimum coverage: 80%
 python eval/run_eval.py
 ```
+
+CI runs these steps on Linux, macOS and Windows with Python 3.11 to 3.13.
+
+## Contributing
+
+Contributions are welcome! Read the [contributing guide](CONTRIBUTING.md) (Portuguese; issues and PRs in English are fine) and the [code of conduct](CODE_OF_CONDUCT.md). Report vulnerabilities privately as described in the [security policy](SECURITY.md). Release notes are in the [CHANGELOG](CHANGELOG.md).
 
 See [docs/architecture.md](docs/architecture.md) for contracts and limits. Repository rules are in [AGENTS.md](AGENTS.md). Sentinela is distributed under the [MIT License](LICENSE).

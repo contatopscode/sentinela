@@ -50,11 +50,11 @@ class SecurityAnalyzer:
                         masked = pattern.sub("[SEGREDO:mascarado]", line)
                         findings.append(
                             Finding(
-                                id=f"{rule}:{path.relative_to(context.root)}:{number}",
+                                id=f"{rule}:{path.relative_to(context.root).as_posix()}:{number}",
                                 analyzer=Analyzer.SECURITY,
                                 rule=rule,
                                 title="Possível segredo embutido no código",
-                                file=str(path.relative_to(context.root)),
+                                file=path.relative_to(context.root).as_posix(),
                                 line=number,
                                 evidence=masked[:500],
                                 raw_severity=Severity.HIGH,
@@ -85,7 +85,7 @@ class SecurityAnalyzer:
                 candidate = (
                     (context.root / path).resolve() if not path.is_absolute() else path.resolve()
                 )
-                filename = str(candidate.relative_to(context.root))
+                filename = candidate.relative_to(context.root).as_posix()
             except (ValueError, OSError):
                 filename = Path(filename).name
             findings.append(

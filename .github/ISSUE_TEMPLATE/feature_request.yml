@@ -1,0 +1,22 @@
+name: Sugerir melhoria / Feature request
+description: Ideia de novo analisador, regra, formato ou integração.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema
+      description: Que dor essa melhoria resolve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposta
+      description: Como você imagina a solução? Considere que tudo deve rodar sem chave de API.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas

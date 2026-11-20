@@ -30,7 +30,7 @@ class PerformanceAnalyzer:
             except (OSError, SyntaxError):
                 continue
             for line, name in nested_functions:
-                relative = str(path.relative_to(context.root))
+                relative = path.relative_to(context.root).as_posix()
                 findings.append(
                     Finding(
                         id=f"nested-loop:{relative}:{line}:{name}",

@@ -1,0 +1,67 @@
+name: Release
+
+# Publica no PyPI por trusted publishing (OIDC), sem token salvo no repositório.
+# Pré-requisito único: cadastrar este workflow como publisher confiável no PyPI
+# e criar o environment "pypi" nas configurações do repositório.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Confere a tag com a versão do pacote
+        run: |
+          version="$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          if [[ "v${version}" != "${GITHUB_REF_NAME}" ]]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} não corresponde à versão ${version} do pyproject.toml"
+            exit 1
+          fi
+      - name: Confere que a tag aponta para um commit da main
+        run: |
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "::error::A tag ${GITHUB_REF_NAME} não está no histórico da main"
+            exit 1
+          fi
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[dev,openai]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy src
+      - run: pytest --cov=sentinela
+      - run: python eval/run_eval.py
+      - run: python -m pip install --upgrade build twine
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publica no PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
