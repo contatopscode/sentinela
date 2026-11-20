@@ -6,11 +6,17 @@ O Sentinela revisa projetos Python com verificações determinísticas de QA, se
 
 ## Instalação
 
-Requer Python 3.11 ou superior.
+Requer Python 3.11 ou superior. O pacote se chama `sentinela-review` no PyPI; o comando é `sentinela`.
+
+```bash
+python -m pip install "sentinela-review[analysis]"
+sentinela --help
+```
+
+A partir do código-fonte:
 
 ```bash
 python -m pip install -e ".[analysis]"
-sentinela --help
 ```
 
 Para desenvolver, instale também as ferramentas de qualidade e testes:

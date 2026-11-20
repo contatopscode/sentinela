@@ -46,7 +46,7 @@ class OpenAIClassifier:
                 from openai import OpenAI
             except ImportError as exc:
                 raise RuntimeError(
-                    "Instale o extra opcional `sentinela[openai]` para usar OpenAI"
+                    "Instale o extra opcional `sentinela-review[openai]` para usar OpenAI"
                 ) from exc
             client = OpenAI(timeout=timeout_seconds, max_retries=0)
         self.model = model

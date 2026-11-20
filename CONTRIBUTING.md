@@ -48,7 +48,7 @@ python eval/run_eval.py
 
 O projeto segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/). Para publicar uma versão, o mantenedor:
 
-1. atualiza `version` no `pyproject.toml` e move as entradas de `Não publicado` para a nova versão no `CHANGELOG.md`;
+1. atualiza `version` no `pyproject.toml` e `__version__` em `src/sentinela/__init__.py` (um teste garante que coincidem) e move as entradas de `Não publicado` para a nova versão no `CHANGELOG.md`;
 2. cria a tag `vX.Y.Z` no commit da `main`;
 3. o workflow `Release` confere a tag, gera o pacote e publica no PyPI por trusted publishing.
 
