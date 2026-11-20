@@ -107,7 +107,7 @@ class QAAnalyzer:
                 candidate = (
                     (context.root / path).resolve() if not path.is_absolute() else path.resolve()
                 )
-                relative = str(candidate.relative_to(context.root))
+                relative = candidate.relative_to(context.root).as_posix()
             except (ValueError, OSError):
                 relative = filename
             if relative not in changed:
