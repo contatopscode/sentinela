@@ -9,3 +9,6 @@ htmlcov/
 dist/
 build/
 .venv/
+.env
+.env.*
+!.env.example
