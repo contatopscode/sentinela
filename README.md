@@ -51,7 +51,7 @@ No Markdown, prováveis falsos positivos aparecem agrupados por regra; use `--sh
 
 ### GitHub Action
 
-A Action local pode publicar um comentário em Pull Request. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
+A Action local publica um único comentário por Pull Request e o atualiza a cada execução. Em PRs de forks, sem permissão de escrita, o relatório fica apenas no resumo do job. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
 
 ```yaml
 permissions:
@@ -60,8 +60,12 @@ permissions:
 
 steps:
   - uses: actions/checkout@v4
+    with:
+      persist-credentials: false
   - uses: ./
 ```
+
+Com `persist-credentials: false`, o token do checkout não fica gravado em `.git/config`, onde os testes do alvo poderiam lê-lo.
 
 Por padrão, a Action não executa os testes do alvo nem consulta a rede para advisories. Ative essas opções deliberadamente ao usar os inputs `run-tests` e `audit-dependencies`. Não use `pull_request_target` para executar código de pull requests não confiáveis.
 

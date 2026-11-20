@@ -51,7 +51,7 @@ In Markdown, likely false positives are grouped by rule; use `--show-false-posit
 
 ### GitHub Action
 
-The local Action can post a pull request comment. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.
+The local Action posts a single pull request comment and updates it on every run. On fork PRs without write permission, the report stays in the job summary only. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.
 
 ```yaml
 permissions:
@@ -60,8 +60,12 @@ permissions:
 
 steps:
   - uses: actions/checkout@v4
+    with:
+      persist-credentials: false
   - uses: ./
 ```
+
+With `persist-credentials: false`, the checkout token is not stored in `.git/config`, where the target's tests could read it.
 
 By default, the Action does not run target tests or query the network for advisories. Enable those options deliberately with the `run-tests` and `audit-dependencies` inputs. Do not use `pull_request_target` to run untrusted pull request code.
 
