@@ -1,5 +1,7 @@
 # Sentinela
 
+[![CI](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml/badge.svg)](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml) [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE) ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
+
 O Sentinela revisa projetos Python com verificações determinísticas de QA, segurança e performance. Um classificador opcional só prioriza achados produzidos por essas ferramentas; o modo `fake` é o padrão e funciona sem chave ou acesso a provedor de modelos.
 
 ## Instalação
@@ -59,7 +61,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
     with:
       persist-credentials: false
   - uses: ./
@@ -96,11 +98,20 @@ O conjunto é pequeno e criado para validar o fluxo local; não representa uma a
 ## Desenvolvimento
 
 ```bash
-pytest
+python -m pip install -e ".[dev]"
+pre-commit install
+
 ruff check .
 ruff format --check .
 mypy src
+pytest --cov=sentinela   # cobertura mínima: 80%
 python eval/run_eval.py
 ```
+
+O CI roda esses passos em Linux, macOS e Windows, com Python 3.11 a 3.13.
+
+## Contribuindo
+
+Contribuições são bem-vindas! Leia o [guia de contribuição](CONTRIBUTING.md) e o [código de conduta](CODE_OF_CONDUCT.md). Vulnerabilidades devem ser relatadas de forma privada, conforme a [política de segurança](SECURITY.md). As mudanças de cada versão estão no [CHANGELOG](CHANGELOG.md).
 
 Veja [docs/architecture.md](docs/architecture.md) para contratos e limites. As regras do repositório estão em [AGENTS.md](AGENTS.md). O Sentinela é distribuído sob a licença [MIT](LICENSE).
