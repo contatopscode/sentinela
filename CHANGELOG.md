@@ -6,6 +6,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Não publicado]
 
+## [0.2.0] - 2026-11-20
+
 ### Adicionado
 
 - `SENTINELA_PASSTHROUGH_ENV` para autorizar, por nome, variáveis repassadas às ferramentas externas.
@@ -19,9 +21,14 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ### Alterado
 
+- O pacote passa a ser distribuído no PyPI como `sentinela-review`; o comando e o módulo continuam `sentinela`.
 - Ferramentas externas recebem um ambiente mínimo; credenciais do processo pai não chegam mais ao código analisado.
 - Prováveis falsos positivos aparecem agrupados por regra no relatório Markdown.
 - A GitHub Action mantém um único comentário por pull request e não falha em PRs de forks.
+
+### Corrigido
+
+- Caminhos dos achados no formato POSIX também no Windows (SARIF, falsos positivos e arquivos alterados no QA).
 
 ## [0.1.0] - 2026-11-19
 
@@ -29,5 +36,6 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 - Primeira versão: analisadores de QA, segurança e performance, classificador `fake` e OpenAI opcional, relatórios Markdown, JSON e SARIF, avaliação offline e GitHub Action.
 
-[Não publicado]: https://github.com/contatopscode/sentinela/compare/v0.1.0...HEAD
+[Não publicado]: https://github.com/contatopscode/sentinela/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/contatopscode/sentinela/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/contatopscode/sentinela/releases/tag/v0.1.0

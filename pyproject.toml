@@ -3,8 +3,8 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sentinela"
-version = "0.1.0"
+name = "sentinela-review"
+version = "0.2.0"
 description = "Revisão local de código com análise determinística e classificação configurável."
 readme = "README.md"
 license = "MIT"
