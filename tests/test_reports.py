@@ -40,7 +40,7 @@ def test_markdown_identifies_false_positive_and_unclassified_findings() -> None:
         ),
     )
 
-    output = render_markdown(report)
+    output = render_markdown(report, show_false_positives=True)
 
     assert "possível falso positivo" in output
     assert "não validada" in output

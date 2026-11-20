@@ -20,7 +20,7 @@ Saídas de modelo precisam conter uma decisão para cada ID enviado, sem IDs rep
 
 ## Guardrails
 
-- Processos externos usam argumentos separados, sem shell, com timeout.
+- Processos externos usam argumentos separados, sem shell, com timeout e ambiente mínimo; variáveis extras só por `SENTINELA_PASSTHROUGH_ENV`, e proxy/certificados só para `pip-audit`.
 - O coletor nunca segue arquivos Python simbólicos nem varre `.git`, ambientes virtuais ou `site-packages`.
 - Testes do alvo precisam de autorização explícita e devem rodar em isolamento para código não confiável.
 - O acesso de rede a advisories requer `--network-pip-audit`.

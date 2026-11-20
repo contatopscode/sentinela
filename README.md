@@ -45,9 +45,13 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace:ro" sentinela
 
 Executar os testes significa executar código do repositório analisado. Use isolamento, como um container, ao revisar código não confiável. O Sentinela não altera esse repositório. A auditoria `pip-audit` é opcional, acessa a rede e só roda com `--network-pip-audit`. Código de teste pode realizar operações próprias; rode-o em ambiente isolado.
 
+Ferramentas externas recebem um ambiente mínimo (`PATH`, `HOME`, locale e diretórios temporários): chaves como `OPENAI_API_KEY` ou `GITHUB_TOKEN` não são repassadas por variável de ambiente ao código analisado. Se os testes do alvo precisarem de alguma variável, autorize-a por nome em `SENTINELA_PASSTHROUGH_ENV` (lista separada por vírgulas). Proxy e certificados só são repassados ao `pip-audit`.
+
+No Markdown, prováveis falsos positivos aparecem agrupados por regra; use `--show-false-positives` para listá-los. JSON e SARIF sempre trazem todos os achados.
+
 ### GitHub Action
 
-A Action local pode publicar um comentário em Pull Request. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
+A Action local publica um único comentário por Pull Request e o atualiza a cada execução. Em PRs de forks, sem permissão de escrita, o relatório fica apenas no resumo do job. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
 
 ```yaml
 permissions:
@@ -56,8 +60,12 @@ permissions:
 
 steps:
   - uses: actions/checkout@v4
+    with:
+      persist-credentials: false
   - uses: ./
 ```
+
+Com `persist-credentials: false`, o token do checkout não fica gravado em `.git/config`, onde os testes do alvo poderiam lê-lo.
 
 Por padrão, a Action não executa os testes do alvo nem consulta a rede para advisories. Ative essas opções deliberadamente ao usar os inputs `run-tests` e `audit-dependencies`. Não use `pull_request_target` para executar código de pull requests não confiáveis.
 
@@ -95,4 +103,4 @@ mypy src
 python eval/run_eval.py
 ```
 
-Veja [docs/architecture.md](docs/architecture.md) para contratos e limites. As regras do repositório estão em [AGENTS.md](AGENTS.md). A escolha de licença continua pendente; nenhuma licença foi presumida.
+Veja [docs/architecture.md](docs/architecture.md) para contratos e limites. As regras do repositório estão em [AGENTS.md](AGENTS.md). O Sentinela é distribuído sob a licença [MIT](LICENSE).

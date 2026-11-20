@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
@@ -24,6 +25,10 @@ class Settings:
     request_timeout_seconds: int = 30
     tool_timeout_seconds: int = 120
     cache_path: str | None = None
+    passthrough_env: tuple[str, ...] = ()
+
+
+_ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
 def load_settings() -> Settings:
@@ -48,6 +53,14 @@ def load_settings() -> Settings:
     if invalid:
         raise ValueError(
             "SENTINELA_ANALYZERS contém valores inválidos: " + ", ".join(sorted(invalid))
+        )
+
+    raw_passthrough = os.getenv("SENTINELA_PASSTHROUGH_ENV", "")
+    passthrough = tuple(part.strip() for part in raw_passthrough.split(",") if part.strip())
+    invalid_names = [name for name in passthrough if not _ENV_NAME.fullmatch(name)]
+    if invalid_names:
+        raise ValueError(
+            "SENTINELA_PASSTHROUGH_ENV contém nomes inválidos: " + ", ".join(invalid_names)
         )
 
     def decimal_setting(name: str) -> Decimal | None:
@@ -98,4 +111,5 @@ def load_settings() -> Settings:
         request_timeout_seconds=parsed_limits["request_timeout_seconds"],
         tool_timeout_seconds=parsed_limits["tool_timeout_seconds"],
         cache_path=os.getenv("SENTINELA_CACHE_PATH") or None,
+        passthrough_env=passthrough,
     )

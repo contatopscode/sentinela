@@ -45,9 +45,13 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/workspace:ro" sentinela
 
 Running tests executes code from the reviewed repository. Use isolation, such as a container, when reviewing untrusted code. Sentinela does not modify that repository. `pip-audit` is optional, accesses the network, and only runs with `--network-pip-audit`. Test code may perform its own operations; run it in an isolated environment.
 
+External tools receive a minimal environment (`PATH`, `HOME`, locale and temp directories): keys such as `OPENAI_API_KEY` or `GITHUB_TOKEN` are not passed to the reviewed code through environment variables. If the target's tests need a variable, allow it by name in `SENTINELA_PASSTHROUGH_ENV` (comma-separated). Proxy and certificate settings are passed to `pip-audit` only.
+
+In Markdown, likely false positives are grouped by rule; use `--show-false-positives` to list them. JSON and SARIF always include every finding.
+
 ### GitHub Action
 
-The local Action can post a pull request comment. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.
+The local Action posts a single pull request comment and updates it on every run. On fork PRs without write permission, the report stays in the job summary only. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.
 
 ```yaml
 permissions:
@@ -56,8 +60,12 @@ permissions:
 
 steps:
   - uses: actions/checkout@v4
+    with:
+      persist-credentials: false
   - uses: ./
 ```
+
+With `persist-credentials: false`, the checkout token is not stored in `.git/config`, where the target's tests could read it.
 
 By default, the Action does not run target tests or query the network for advisories. Enable those options deliberately with the `run-tests` and `audit-dependencies` inputs. Do not use `pull_request_target` to run untrusted pull request code.
 
@@ -95,4 +103,4 @@ mypy src
 python eval/run_eval.py
 ```
 
-See [docs/architecture.md](docs/architecture.md) for contracts and limits. Repository rules are in [AGENTS.md](AGENTS.md). The license choice is pending; no license has been assumed.
+See [docs/architecture.md](docs/architecture.md) for contracts and limits. Repository rules are in [AGENTS.md](AGENTS.md). Sentinela is distributed under the [MIT License](LICENSE).
