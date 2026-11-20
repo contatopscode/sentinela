@@ -16,7 +16,7 @@ sentinela --help
 Para desenvolver, instale também as ferramentas de qualidade e testes:
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,openai]"
 ```
 
 Para habilitar a integração OpenAI, instale o extra opcional `openai`. O identificador do modelo e os preços atuais por mil tokens são configurados por ambiente; nenhum nome de modelo ou endpoint é fixado no código.
@@ -98,7 +98,7 @@ O conjunto é pequeno e criado para validar o fluxo local; não representa uma a
 ## Desenvolvimento
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,openai]"
 pre-commit install
 
 ruff check .

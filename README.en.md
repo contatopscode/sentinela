@@ -16,7 +16,7 @@ sentinela --help
 For development, install the quality and test tools as well:
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,openai]"
 ```
 
 To enable the OpenAI integration, install the optional `openai` extra. The model identifier and current per-thousand-token prices are configured through the environment; no model name or endpoint is fixed in the code.
@@ -98,7 +98,7 @@ This small curated set validates the local workflow; it is not an independent ev
 ## Development
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,openai]"
 pre-commit install
 
 ruff check .
