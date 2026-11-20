@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,13 +8,46 @@ version = "0.1.0"
 description = "Revisão local de código com análise determinística e classificação configurável."
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "pscode" }]
+keywords = ["code-review", "static-analysis", "security", "qa", "bandit", "sarif"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Security",
+    "Typing :: Typed",
+]
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2,<3"]
 
 [project.optional-dependencies]
-dev = ["bandit>=1.7", "mypy>=1.10", "pip-audit>=2.7", "PyYAML>=6", "pytest>=8", "pytest-cov>=5", "radon>=6", "ruff>=0.6"]
+dev = [
+    "bandit>=1.7",
+    "build>=1",
+    "mypy>=1.10",
+    "pip-audit>=2.7",
+    "pre-commit>=3",
+    "PyYAML>=6",
+    "pytest>=8",
+    "pytest-cov>=5",
+    "radon>=6",
+    "ruff>=0.6",
+]
 openai = ["openai>=1.66,<4"]
 analysis = ["bandit>=1.7", "pip-audit>=2.7", "pytest>=8", "pytest-cov>=5", "radon>=6"]
+
+[project.urls]
+Homepage = "https://github.com/contatopscode/sentinela"
+Issues = "https://github.com/contatopscode/sentinela/issues"
+Changelog = "https://github.com/contatopscode/sentinela/blob/main/CHANGELOG.md"
 
 [project.scripts]
 sentinela = "sentinela.cli:main"
@@ -22,8 +55,19 @@ sentinela = "sentinela.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+sentinela = ["py.typed"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["sentinela"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
 
 [tool.ruff]
 line-length = 100
