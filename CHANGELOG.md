@@ -11,6 +11,12 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 - Opção `--exclude` (repetível) e variável `SENTINELA_EXCLUDE` (lista separada por vírgulas) para ignorar diretórios.
 - Novas exclusões padrão: `node_modules`, `.tox`, `.nox`, `.eggs`, caches de ferramentas e `.claude/worktrees`.
 - Eval ampliado de 12 para 22 casos (segredos, SQL, YAML, TLS, controles negativos e regressão de exclusões), com métricas por regra.
+- Integração com o code scanning do GitHub: inputs `upload-sarif` e `exclude` e output `sarif-file` na Action, além de um workflow que revisa o próprio repositório.
+- Opção `--sarif-output` para gravar o SARIF junto com o relatório principal.
+
+### Alterado
+
+- SARIF passa a incluir `$schema`, versão da ferramenta, descrições e ajuda das regras, `ruleIndex`, tags e `security-severity` nas regras de segurança. Achados sem arquivo viram notificações da execução, e achados de arquivo inteiro apontam para a linha 1.
 
 ### Corrigido
 

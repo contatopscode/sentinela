@@ -79,6 +79,27 @@ Com `persist-credentials: false`, o token do checkout não fica gravado em `.git
 
 Por padrão, a Action não executa os testes do alvo nem consulta a rede para advisories. Ative essas opções deliberadamente ao usar os inputs `run-tests` e `audit-dependencies`. Não use `pull_request_target` para executar código de pull requests não confiáveis.
 
+#### Code scanning (SARIF)
+
+Com `upload-sarif: "true"`, os achados também vão para a aba **Security → Code scanning** do repositório, como alertas com linha e severidade. O job precisa de `security-events: write`. Em PRs de forks o upload é pulado. Achados sem arquivo, como vulnerabilidades de dependências, entram como notificações da execução. O input `exclude` repassa diretórios a ignorar (`SENTINELA_EXCLUDE`), e o output `sarif-file` aponta o arquivo gerado.
+
+```yaml
+permissions:
+  contents: read
+  security-events: write
+
+steps:
+  - uses: actions/checkout@v7
+    with:
+      persist-credentials: false
+  - uses: ./
+    with:
+      post-comment: "false"
+      upload-sarif: "true"
+```
+
+Na CLI, `--sarif-output ARQUIVO` grava o SARIF junto com o relatório principal, sem repetir a análise.
+
 ## Analisadores
 
 - **QA:** só roda pytest com `--run-tests`; tenta uma repetição para identificar falhas instáveis e registra arquivos alterados sem linhas cobertas quando `pytest-cov` está instalado.

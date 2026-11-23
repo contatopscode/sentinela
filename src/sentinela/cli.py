@@ -31,6 +31,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     review.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
     review.add_argument(
+        "--sarif-output",
+        metavar="ARQUIVO",
+        help="Grava também o relatório SARIF neste arquivo, sem rodar a análise de novo",
+    )
+    review.add_argument(
         "--exclude",
         action="append",
         default=[],
@@ -86,6 +91,14 @@ def main(argv: list[str] | None = None) -> int:
             rendered = json_out.render(report)
         else:
             rendered = sarif.render(report)
+        if args.sarif_output:
+            from pathlib import Path
+
+            try:
+                Path(args.sarif_output).write_text(sarif.render(report) + "\n", encoding="utf-8")
+            except OSError as exc:
+                print(f"sentinela: não foi possível gravar o SARIF: {exc}", file=sys.stderr)
+                return 2
         print(rendered)
         return 0
     if args.command == "eval":
