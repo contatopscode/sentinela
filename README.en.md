@@ -57,6 +57,8 @@ External tools receive a minimal environment (`PATH`, `HOME`, locale and temp di
 
 In Markdown, likely false positives are grouped by rule; use `--show-false-positives` to list them. JSON and SARIF always include every finding.
 
+Virtual environments, `node_modules`, caches and `.git` are skipped. To skip other directories, use `--exclude PATH` (repeatable) or `SENTINELA_EXCLUDE` (comma-separated). A bare name matches at any depth; a path containing `/` is matched from the root.
+
 ### GitHub Action
 
 The local Action posts a single pull request comment and updates it on every run. On fork PRs without write permission, the report stays in the job summary only. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.

@@ -57,6 +57,8 @@ Ferramentas externas recebem um ambiente mínimo (`PATH`, `HOME`, locale e diret
 
 No Markdown, prováveis falsos positivos aparecem agrupados por regra; use `--show-false-positives` para listá-los. JSON e SARIF sempre trazem todos os achados.
 
+Ambientes virtuais, `node_modules`, caches e `.git` ficam fora da análise. Para ignorar outros diretórios, use `--exclude CAMINHO` (repetível) ou `SENTINELA_EXCLUDE` (lista separada por vírgulas). Um nome simples vale em qualquer nível; um caminho com `/` é comparado a partir da raiz.
+
 ### GitHub Action
 
 A Action local publica um único comentário por Pull Request e o atualiza a cada execução. Em PRs de forks, sem permissão de escrita, o relatório fica apenas no resumo do job. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
