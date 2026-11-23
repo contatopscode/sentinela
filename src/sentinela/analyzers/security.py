@@ -65,7 +65,7 @@ class SecurityAnalyzer:
 
     def _bandit(self, context: AnalysisContext) -> list[Finding]:
         try:
-            code, stdout, _ = self.runner(["bandit", "-f", "json", "-r", "-q", "."], context)
+            code, stdout, _ = self.runner(_bandit_command(context), context)
         except ToolUnavailableError:
             return []
         except TimeoutError:
@@ -131,6 +131,15 @@ class SecurityAnalyzer:
                     )
                 )
         return findings
+
+
+def _bandit_command(context: AnalysisContext) -> list[str]:
+    patterns = [
+        f"./{entry.strip('/')}" if "/" in entry.strip("/") else f"*/{entry.strip('/')}/*"
+        for entry in context.excludes
+        if entry.strip("/")
+    ]
+    return ["bandit", "-f", "json", "-r", "-q", "-x", ",".join(patterns), "."]
 
 
 def _severity(value: object) -> Severity:

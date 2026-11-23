@@ -23,3 +23,23 @@ cases:
     expected_rules: []
   - id: simple-loop
     expected_rules: []
+  - id: aws-key
+    expected_rules: [aws-access-key]
+  - id: github-token
+    expected_rules: [github-token]
+  - id: private-key
+    expected_rules: [private-key]
+  - id: sql-injection
+    expected_rules: [B608]
+  - id: sql-parametrized
+    expected_rules: []
+  - id: unsafe-yaml
+    expected_rules: [B506]
+  - id: safe-yaml
+    expected_rules: []
+  - id: tls-verify-off
+    expected_rules: [B501]
+  - id: secret-from-env
+    expected_rules: []
+  - id: ignored-dirs
+    expected_rules: []
