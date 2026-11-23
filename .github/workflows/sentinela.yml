@@ -1,0 +1,32 @@
+name: Sentinela
+
+# Roda o próprio Sentinela sobre o repositório e publica os achados no code scanning.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sentinela-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  review:
+    name: Revisão do Sentinela
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./
+        with:
+          post-comment: "false"
+          upload-sarif: "true"
+          # Casos do eval são vulneráveis de propósito; testes usam assert.
+          exclude: eval/cases,tests
