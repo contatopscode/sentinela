@@ -43,3 +43,9 @@ cases:
     expected_rules: []
   - id: ignored-dirs
     expected_rules: []
+  - id: ts-github-token
+    expected_rules: [github-token]
+  - id: ts-secret-from-env
+    expected_rules: []
+  - id: ts-ignored-artifacts
+    expected_rules: []

@@ -37,7 +37,7 @@ class SecurityAnalyzer:
 
     def _scan_secrets(self, context: AnalysisContext) -> list[Finding]:
         findings: list[Finding] = []
-        for path in context.python_files:
+        for path in (*context.python_files, *context.script_files):
             try:
                 lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
             except OSError:

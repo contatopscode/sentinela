@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -20,13 +21,31 @@ DEFAULT_EXCLUDES: tuple[str, ...] = (
     ".ruff_cache",
     ".pytest_cache",
     ".claude/worktrees",
+    ".next",
+    ".nuxt",
+    ".svelte-kit",
+    ".turbo",
 )
+
+# Fontes JavaScript e TypeScript; por ora só a varredura de segredos as lê.
+SCRIPT_SUFFIXES: frozenset[str] = frozenset(
+    {".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts"}
+)
+
+
+def is_script_source(path: Path) -> bool:
+    """Declarações de tipo e bundles minificados não são código escrito no projeto."""
+    name = path.name
+    if name.endswith((".d.ts", ".d.mts", ".d.cts")) or ".min." in name:
+        return False
+    return path.suffix in SCRIPT_SUFFIXES
 
 
 @dataclass(frozen=True, slots=True)
 class AnalysisContext:
     root: Path
     python_files: tuple[Path, ...]
+    script_files: tuple[Path, ...] = ()
     run_tests: bool = False
     allow_network_audit: bool = False
     enabled_analyzers: tuple[str, ...] = ("qa", "security", "performance")
@@ -67,19 +86,36 @@ def collect_context(
     passthrough_env: tuple[str, ...] = (),
     extra_excludes: tuple[str, ...] = (),
 ) -> AnalysisContext:
-    """Valida o diretório e lista fontes Python sem seguir symlinks."""
+    """Valida o diretório e lista fontes Python, JavaScript e TypeScript sem seguir symlinks."""
     resolved = Path(root).expanduser().resolve(strict=True)
     if not resolved.is_dir():
         raise ValueError(f"O caminho não é um diretório: {resolved}")
     excludes = DEFAULT_EXCLUDES + tuple(extra_excludes)
-    files = tuple(
-        path
-        for path in sorted(resolved.rglob("*.py"))
-        if not path.is_symlink() and not is_excluded(path.relative_to(resolved), excludes)
-    )
+    python_files: list[Path] = []
+    script_files: list[Path] = []
+    for directory, dirnames, filenames in os.walk(resolved):
+        base = Path(directory)
+        relative_dir = base.relative_to(resolved)
+        # Poda diretórios excluídos antes de descer (node_modules pode ter milhares de arquivos).
+        dirnames[:] = sorted(
+            name
+            for name in dirnames
+            if not (base / name).is_symlink()
+            and not is_excluded(relative_dir / name / "_", excludes)
+        )
+        for filename in filenames:
+            path = base / filename
+            if path.suffix != ".py" and not is_script_source(path):
+                continue
+            if path.is_symlink() or not path.is_file():
+                continue
+            if is_excluded(path.relative_to(resolved), excludes):
+                continue
+            (python_files if path.suffix == ".py" else script_files).append(path)
     return AnalysisContext(
         root=resolved,
-        python_files=files,
+        python_files=tuple(sorted(python_files)),
+        script_files=tuple(sorted(script_files)),
         run_tests=run_tests,
         allow_network_audit=allow_network_audit,
         enabled_analyzers=enabled_analyzers,
