@@ -31,6 +31,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     review.add_argument("--format", choices=("markdown", "json", "sarif"), default="markdown")
     review.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="CAMINHO",
+        help="Ignora um diretório (nome em qualquer nível ou caminho relativo); repetível",
+    )
+    review.add_argument(
         "--show-false-positives",
         action="store_true",
         help="Lista cada provável falso positivo no relatório Markdown, em vez de agrupá-los",
@@ -63,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
                 max_evidence_chars=settings.max_evidence_chars,
                 timeout_seconds=settings.tool_timeout_seconds,
                 passthrough_env=settings.passthrough_env,
+                extra_excludes=settings.excludes + tuple(args.exclude),
             )
             report = review(context, classifier=build_classifier(settings))
         except (OSError, RuntimeError, ValueError) as exc:
@@ -85,6 +93,13 @@ def main(argv: list[str] | None = None) -> int:
         from pathlib import Path
 
         project_root = Path(__file__).resolve().parents[2]
+        if not (project_root / "eval" / "run_eval.py").is_file():
+            print(
+                "sentinela: o eval acompanha o código-fonte; rode a partir de um clone do "
+                "repositório (pip install -e .)",
+                file=sys.stderr,
+            )
+            return 2
         evaluation = runpy.run_path(str(project_root / "eval" / "run_eval.py"))
         return int(evaluation["main"]())
 

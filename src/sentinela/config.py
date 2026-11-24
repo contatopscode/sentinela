@@ -26,6 +26,7 @@ class Settings:
     tool_timeout_seconds: int = 120
     cache_path: str | None = None
     passthrough_env: tuple[str, ...] = ()
+    excludes: tuple[str, ...] = ()
 
 
 _ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -62,6 +63,9 @@ def load_settings() -> Settings:
         raise ValueError(
             "SENTINELA_PASSTHROUGH_ENV contém nomes inválidos: " + ", ".join(invalid_names)
         )
+
+    raw_excludes = os.getenv("SENTINELA_EXCLUDE", "")
+    excludes = tuple(part.strip() for part in raw_excludes.split(",") if part.strip())
 
     def decimal_setting(name: str) -> Decimal | None:
         raw = os.getenv(name)
@@ -112,4 +116,5 @@ def load_settings() -> Settings:
         tool_timeout_seconds=parsed_limits["tool_timeout_seconds"],
         cache_path=os.getenv("SENTINELA_CACHE_PATH") or None,
         passthrough_env=passthrough,
+        excludes=excludes,
     )

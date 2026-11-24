@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import statistics
+from collections import defaultdict
 from pathlib import Path
 from time import monotonic
 
@@ -19,6 +20,7 @@ def main() -> int:
     expected = yaml.safe_load((ROOT / "expected.yaml").read_text(encoding="utf-8"))["cases"]
     latencies: list[float] = []
     true_positive = false_positive = false_negative = exact_cases = 0
+    per_rule: dict[str, list[int]] = defaultdict(lambda: [0, 0, 0])  # tp, fp, fn
     rows: list[tuple[str, str, str]] = []
     mismatches: list[tuple[str, str, str]] = []
 
@@ -35,6 +37,12 @@ def main() -> int:
             mismatches.append(
                 (case["id"], ",".join(sorted(expected_rules)), ",".join(sorted(actual_rules)))
             )
+        for rule in actual_rules & expected_rules:
+            per_rule[rule][0] += 1
+        for rule in actual_rules - expected_rules:
+            per_rule[rule][1] += 1
+        for rule in expected_rules - actual_rules:
+            per_rule[rule][2] += 1
         true_positive += len(actual_rules & expected_rules)
         false_positive += len(actual_rules - expected_rules)
         false_negative += len(expected_rules - actual_rules)
@@ -65,6 +73,8 @@ def main() -> int:
     print(
         f"latency_median_ms={median * 1000:.2f} latency_p95_ms={p95 * 1000:.2f} cost_usd=0.000000"
     )
+    for rule, (tp, fp, fn) in sorted(per_rule.items()):
+        print(f"rule={rule} tp={tp} fp={fp} fn={fn}")
     for row in rows:
         print(f"case={row[0]} severity={row[1]} decision={row[2]}")
     for case_id, wanted, got in mismatches:

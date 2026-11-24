@@ -6,6 +6,24 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ## [Não publicado]
 
+### Adicionado
+
+- Opção `--exclude` (repetível) e variável `SENTINELA_EXCLUDE` (lista separada por vírgulas) para ignorar diretórios.
+- Novas exclusões padrão: `node_modules`, `.tox`, `.nox`, `.eggs`, caches de ferramentas e `.claude/worktrees`.
+- Eval ampliado de 12 para 22 casos (segredos, SQL, YAML, TLS, controles negativos e regressão de exclusões), com métricas por regra.
+- Primeiro suporte a JavaScript e TypeScript: o coletor lista essas fontes (sem `.d.ts` nem `*.min.*`) e a varredura de segredos passa a cobri-las. Há 3 casos novos no eval (25 no total).
+- Exclusões padrão para artefatos de front-end: `.next`, `.nuxt`, `.svelte-kit` e `.turbo`.
+
+### Alterado
+
+- O coletor poda os diretórios excluídos antes de descer neles, em vez de listar tudo e filtrar depois, o que acelera repositórios com `node_modules`.
+
+### Corrigido
+
+- Exclusões passam a valer só sobre o caminho relativo à raiz analisada; antes, uma pasta `venv` acima do projeto fazia todos os arquivos serem ignorados.
+- O Bandit recebe as mesmas exclusões do coletor; antes varria a raiz inteira.
+- `sentinela eval` explica que o eval só existe em um clone do repositório, em vez de falhar com erro de arquivo.
+
 ## [0.2.0] - 2026-11-20
 
 ### Adicionado

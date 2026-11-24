@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml/badge.svg)](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
 
-Sentinela reviews Python projects with deterministic QA, security, and performance checks. An optional classifier only prioritizes findings produced by those tools; `fake` is the default and works without an API key or model-provider access.
+Sentinela reviews Python projects with deterministic QA, security, and performance checks. For JavaScript and TypeScript projects it currently runs the secret scan only. An optional classifier only prioritizes findings produced by those tools; `fake` is the default and works without an API key or model-provider access.
 
 ## Installation
 
@@ -57,6 +57,8 @@ External tools receive a minimal environment (`PATH`, `HOME`, locale and temp di
 
 In Markdown, likely false positives are grouped by rule; use `--show-false-positives` to list them. JSON and SARIF always include every finding.
 
+Virtual environments, `node_modules`, caches and `.git` are skipped. To skip other directories, use `--exclude PATH` (repeatable) or `SENTINELA_EXCLUDE` (comma-separated). A bare name matches at any depth; a path containing `/` is matched from the root.
+
 ### GitHub Action
 
 The local Action posts a single pull request comment and updates it on every run. On fork PRs without write permission, the report stays in the job summary only. The calling workflow must grant only the permissions specified in the plan: `contents: read` and `pull-requests: write`.
@@ -80,7 +82,7 @@ By default, the Action does not run target tests or query the network for adviso
 ## Analyzers
 
 - **QA:** runs pytest only with `--run-tests`; retries once to identify flaky failures and reports changed files with no covered lines when `pytest-cov` is installed.
-- **Security:** detects local secret patterns with masked evidence and uses Bandit when installed. `pip-audit` queries advisories only when explicitly enabled on the CLI.
+- **Security:** detects local secret patterns with masked evidence in Python, JavaScript and TypeScript files (`.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, `.tsx`, `.mts`, `.cts`; not `.d.ts` or `*.min.*`) and uses Bandit when installed. `pip-audit` queries advisories only when explicitly enabled on the CLI.
 - **Performance:** detects nested loops as a heuristic, uses Radon for complexity, and measures test durations during an authorized QA run.
 
 Missing external tools do not stop other analyzers; the report includes warnings. Select analyzers with the comma-separated `SENTINELA_ANALYZERS` variable (`qa,security,performance`).
@@ -97,7 +99,7 @@ Model decisions can be stored in a local SQLite cache at `~/.cache/sentinela/dec
 
 ## Evaluation
 
-`eval/` contains 12 synthetic code cases, expected results, and an offline run using static tools and the fake classifier. In the run validated in this environment, analyzers matched all 12 expected cases (dataset precision and recall: 1.00), with zero external cost. Latency and percentiles are measured on each run by `python eval/run_eval.py`.
+`eval/` contains 25 synthetic code cases (Python and TypeScript), expected results, and an offline run using static tools and the fake classifier. In the run validated in this environment, analyzers matched all 25 expected cases (dataset precision and recall: 1.00), with zero external cost. Latency and percentiles are measured on each run by `python eval/run_eval.py`.
 
 This small curated set validates the local workflow; it is not an independent evaluation on real-world repositories and does not measure a remote model's quality. JEV and the explainer are not included in this version: there is no adapter based on verified JEV documentation, and the explainer is optional in the plan.
 

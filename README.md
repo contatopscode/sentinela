@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml/badge.svg)](https://github.com/contatopscode/sentinela/actions/workflows/ci.yml) [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE) ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)
 
-O Sentinela revisa projetos Python com verificações determinísticas de QA, segurança e performance. Um classificador opcional só prioriza achados produzidos por essas ferramentas; o modo `fake` é o padrão e funciona sem chave ou acesso a provedor de modelos.
+O Sentinela revisa projetos Python com verificações determinísticas de QA, segurança e performance. Em projetos JavaScript e TypeScript, por enquanto, faz só a varredura de segredos. Um classificador opcional só prioriza achados produzidos por essas ferramentas; o modo `fake` é o padrão e funciona sem chave ou acesso a provedor de modelos.
 
 ## Instalação
 
@@ -57,6 +57,8 @@ Ferramentas externas recebem um ambiente mínimo (`PATH`, `HOME`, locale e diret
 
 No Markdown, prováveis falsos positivos aparecem agrupados por regra; use `--show-false-positives` para listá-los. JSON e SARIF sempre trazem todos os achados.
 
+Ambientes virtuais, `node_modules`, caches e `.git` ficam fora da análise. Para ignorar outros diretórios, use `--exclude CAMINHO` (repetível) ou `SENTINELA_EXCLUDE` (lista separada por vírgulas). Um nome simples vale em qualquer nível; um caminho com `/` é comparado a partir da raiz.
+
 ### GitHub Action
 
 A Action local publica um único comentário por Pull Request e o atualiza a cada execução. Em PRs de forks, sem permissão de escrita, o relatório fica apenas no resumo do job. O workflow que a chama precisa conceder apenas as permissões indicadas no plano: `contents: read` e `pull-requests: write`.
@@ -80,7 +82,7 @@ Por padrão, a Action não executa os testes do alvo nem consulta a rede para ad
 ## Analisadores
 
 - **QA:** só roda pytest com `--run-tests`; tenta uma repetição para identificar falhas instáveis e registra arquivos alterados sem linhas cobertas quando `pytest-cov` está instalado.
-- **Segurança:** detecta padrões locais de segredos com evidência mascarada; usa Bandit se instalado. `pip-audit` consulta advisories apenas quando explicitamente autorizado na CLI.
+- **Segurança:** detecta padrões locais de segredos com evidência mascarada, em arquivos Python, JavaScript e TypeScript (`.js`, `.jsx`, `.mjs`, `.cjs`, `.ts`, `.tsx`, `.mts`, `.cts`; sem `.d.ts` nem `*.min.*`); usa Bandit se instalado. `pip-audit` consulta advisories apenas quando explicitamente autorizado na CLI.
 - **Performance:** detecta laços aninhados como heurística, usa Radon para complexidade e mede duração de testes durante a execução QA autorizada.
 
 Ferramentas externas ausentes não interrompem os outros analisadores; o relatório mostra avisos. Os analisadores podem ser selecionados por `SENTINELA_ANALYZERS` com uma lista separada por vírgulas (`qa,security,performance`).
@@ -97,7 +99,7 @@ As decisões do modelo podem ser guardadas em cache SQLite local em `~/.cache/se
 
 ## Avaliação
 
-`eval/` contém 12 casos sintéticos de código, um gabarito e uma execução offline com ferramentas estáticas e o classificador fake. Na execução validada neste ambiente, os analisadores encontraram os resultados esperados nos 12 casos (precisão e cobertura do conjunto: 1,00), com custo externo zero. Latência e percentis são medidos a cada execução por `python eval/run_eval.py`.
+`eval/` contém 25 casos sintéticos de código (Python e TypeScript), um gabarito e uma execução offline com ferramentas estáticas e o classificador fake. Na execução validada neste ambiente, os analisadores encontraram os resultados esperados nos 25 casos (precisão e cobertura do conjunto: 1,00), com custo externo zero. Latência e percentis são medidos a cada execução por `python eval/run_eval.py`.
 
 O conjunto é pequeno e criado para validar o fluxo local; não representa uma avaliação independente de desempenho em repositórios reais nem mede qualidade de um modelo remoto. O JEV e o explicador ficaram fora desta versão: não há adaptador baseado em documentação verificada para o JEV, e o explicador é opcional no plano.
 
