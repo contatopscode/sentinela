@@ -2,7 +2,7 @@
 
 ## Fluxo
 
-1. `collector.py` valida a raiz e lista arquivos Python sem escrever no repositório analisado.
+1. `collector.py` valida a raiz e lista arquivos Python (`python_files`) e JavaScript/TypeScript (`script_files`) sem escrever no repositório analisado. Diretórios excluídos são podados antes da descida, e `script_files` por ora alimenta só a varredura de segredos.
 2. O orquestrador executa QA, segurança e performance em paralelo. QA permanece inativo sem `--run-tests`; `pip-audit` permanece inativo sem `--network-pip-audit`.
 3. Analisadores determinísticos produzem `Finding`. Ferramentas externas ausentes viram avisos, e cada processo tem timeout.
 4. O limite global de achados é aplicado. O classificador fake preserva severidade e aplica regras simples de falsos positivos.
